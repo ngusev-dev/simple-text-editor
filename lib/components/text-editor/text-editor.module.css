@@ -1,0 +1,7 @@
+.textEditor {
+  background: #f9fafb;
+  overflow: hidden;
+  border: 1px solid #ebe6e7;
+  border-radius: 12px;
+  width: 100%;
+}
