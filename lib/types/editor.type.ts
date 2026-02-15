@@ -1,8 +1,5 @@
-import type { RefObject } from "react";
+import type { BaseEditor } from "slate";
+import type { ReactEditor } from "slate-react";
 
-export interface EditorContextType {
-  editorRef: RefObject<HTMLDivElement | null> | null;
-  editorData: string;
-  onChangeEditorData: (data: string) => void;
-  execCommand: (command: string, value?: string) => void;
-}
+export type CustomEditor = BaseEditor & ReactEditor;
+export type FormattedText = { text: string; bold?: true };

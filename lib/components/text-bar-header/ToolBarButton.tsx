@@ -6,9 +6,13 @@ interface IToolBarButton extends PropsWithChildren<
   ButtonHTMLAttributes<HTMLButtonElement>
 > {}
 
-export default function ToolBarButton({ children, ...props }: IToolBarButton) {
+export default function ToolBarButton({
+  children,
+  className,
+  ...props
+}: IToolBarButton) {
   return (
-    <button {...props} className={styles.toolbarButton}>
+    <button {...props} className={`${styles.toolbarButton} ${className}`}>
       {children}
     </button>
   );
