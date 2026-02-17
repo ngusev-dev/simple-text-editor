@@ -1,4 +1,4 @@
-import { Editor, type BaseEditor } from "slate";
+import { Editor, Element, Transforms, type BaseEditor } from "slate";
 
 class editorService {
   isActiveMark(editor: BaseEditor, type: string) {
@@ -6,37 +6,54 @@ class editorService {
     return marks ? (marks as Record<string, boolean>)[type] === true : false;
   }
 
-  toggleBoldMark(editor: BaseEditor) {
-    const isActive = this.isActiveMark(editor, "bold");
+  toggleMark(editor: BaseEditor, type: string) {
+    const isActive = this.isActiveMark(editor, type);
 
     if (isActive) {
-      Editor.removeMark(editor, "bold");
+      Editor.removeMark(editor, type);
       return;
     }
 
-    Editor.addMark(editor, "bold", true);
+    Editor.addMark(editor, type, true);
   }
 
-  toggleItalicMark(editor: BaseEditor) {
-    const isActive = this.isActiveMark(editor, "italic");
+  transformBlock(editor: BaseEditor, blockType: string) {
+    const isActiveTypeBlock = this.isActiveNode(editor, blockType);
 
-    if (isActive) {
-      Editor.removeMark(editor, "italic");
-      return;
-    }
-
-    Editor.addMark(editor, "italic", true);
+    Transforms.setNodes(
+      editor,
+      { type: isActiveTypeBlock ? "paragraph" : blockType } as any,
+      {
+        match: (n) => Editor.isBlock(editor, n as any) && Element.isElement(n),
+      },
+    );
   }
 
-  toggleUnderlineMark(editor: BaseEditor) {
-    const isActive = this.isActiveMark(editor, "underline");
+  transformList(editor: BaseEditor, listType: "ol" | "ul") {
+    const isList = this.isActiveNode(editor, listType);
 
-    if (isActive) {
-      Editor.removeMark(editor, "underline");
-      return;
+    Transforms.unwrapNodes(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        Element.isElement(n) &&
+        ["ol", "ul"].includes((n as any).type as string),
+      split: true,
+    });
+
+    Transforms.setNodes(editor, {
+      type: isList ? "paragraph" : "li",
+    } as any);
+
+    if (!isList) {
+      Transforms.wrapNodes(editor, { type: listType, children: [] } as any);
     }
+  }
 
-    Editor.addMark(editor, "underline", true);
+  isActiveNode(editor: BaseEditor, type: string) {
+    const [match] = Editor.nodes(editor, {
+      match: (n) => (n as any).type === type,
+    });
+    return !!match;
   }
 }
 
