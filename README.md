@@ -6,6 +6,4 @@
  <em>A simple text editor written in React.js</em>
 </p>
 
-<img width="925" height="555" alt="image" src="https://github.com/user-attachments/assets/58216ce5-fe9c-4f65-8a1f-3e49ccbf6af0" />
-
-
+<img width="648" height="543" alt="image" src="https://github.com/user-attachments/assets/d4dd0450-5e81-4e1d-adf4-d205a948e2ca" />
