@@ -1,4 +1,12 @@
-import { Editor, Element, Transforms, type BaseEditor } from "slate";
+import {
+  Editor,
+  Element,
+  Path,
+  Range,
+  Transforms,
+  type BaseEditor,
+} from "slate";
+import { ReactEditor } from "slate-react";
 
 class editorService {
   isActiveMark(editor: BaseEditor, type: string) {
@@ -15,6 +23,8 @@ class editorService {
     }
 
     Editor.addMark(editor, type, true);
+
+    ReactEditor.focus(editor as any);
   }
 
   transformBlock(editor: BaseEditor, blockType: string) {
@@ -47,6 +57,8 @@ class editorService {
     if (!isList) {
       Transforms.wrapNodes(editor, { type: listType, children: [] } as any);
     }
+
+    ReactEditor.focus(editor as any);
   }
 
   isActiveNode(editor: BaseEditor, type: string) {
@@ -54,6 +66,65 @@ class editorService {
       match: (n) => (n as any).type === type,
     });
     return !!match;
+  }
+
+  insertLink(editor: BaseEditor) {
+    const url = prompt("Enter a URL");
+
+    if (!url) return;
+
+    const { selection } = editor;
+
+    ReactEditor.focus(editor as any);
+
+    const link = {
+      type: "link",
+      url,
+      children: [{ text: "Ссылка" }],
+    };
+
+    if (!!selection) {
+      const [parentNode, parentPath] = Editor.parent(
+        editor,
+        selection.focus.path,
+      );
+
+      if ((parentNode as any).type === "link") {
+        Transforms.unwrapNodes(editor, {
+          ...{},
+          match: (n) =>
+            !Editor.isEditor(n) &&
+            Element.isElement(n) &&
+            (n as any).type === "link",
+        });
+
+        return;
+      }
+
+      if (editor.isVoid(parentNode)) {
+        Transforms.insertNodes(
+          editor,
+          {
+            type: "link",
+            children: [link],
+          } as any,
+          {
+            at: Path.next(parentPath),
+            select: true,
+          } as any,
+        );
+      } else if (Range.isCollapsed(selection)) {
+        Transforms.insertNodes(editor, link, { select: true });
+      } else {
+        Transforms.wrapNodes(editor, link, { split: true });
+        Transforms.collapse(editor, { edge: "end" });
+      }
+    } else {
+      Transforms.insertNodes(editor, {
+        type: "link",
+        children: [link],
+      } as any);
+    }
   }
 }
 

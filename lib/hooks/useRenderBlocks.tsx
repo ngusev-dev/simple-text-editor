@@ -6,6 +6,7 @@ import { QuoteBlock } from "../components/render-blocks";
 import { OrderList } from "../components/render-blocks/order-list/OrderList";
 import { ListItem } from "../components/render-blocks/list-item/ListItem";
 import { UnorderList } from "../components/render-blocks/unorder-list/UnorderList";
+import { LinkBlock } from "../components/render-blocks/link-block/LinkBlock";
 
 export const useRenderBlocks = () => {
   const renderBlocks = useCallback((props: any) => {
@@ -20,6 +21,8 @@ export const useRenderBlocks = () => {
         return <ListItem {...props} />;
       case "ul":
         return <UnorderList {...props} />;
+      case "link":
+        return <LinkBlock {...props} />;
       default:
         return <DefaultBlock {...props} />;
     }

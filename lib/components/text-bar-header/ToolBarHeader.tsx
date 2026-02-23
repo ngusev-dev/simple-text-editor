@@ -1,6 +1,7 @@
 import {
   Bold,
   Italic,
+  Link,
   List,
   ListOrdered,
   Quote,
@@ -68,6 +69,12 @@ export default function TextBarHeader() {
         onClick={() => EditorService.transformList(editor, "ul")}
       >
         <List size={BUTTON_SIZE} />
+      </ToolBarButton>
+      <ToolBarButton
+        className={isActiveNodeButton("link")}
+        onClick={() => EditorService.insertLink(editor)}
+      >
+        <Link size={BUTTON_SIZE} />
       </ToolBarButton>
     </span>
   );

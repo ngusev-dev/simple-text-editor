@@ -1,0 +1,16 @@
+.elementLink {
+  position: relative;
+  display: inline-block;
+}
+
+.linkPopup {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 6px 10px;
+  gap: 10px;
+  border-radius: 6px;
+  border: 1px solid lightgray;
+}
