@@ -1,5 +1,12 @@
-import type { BaseEditor } from "slate";
-import type { ReactEditor } from "slate-react";
+import type { Ref } from "react";
+import type { Descendant } from "slate";
 
-export type CustomEditor = BaseEditor & ReactEditor;
-export type FormattedText = { text: string; bold?: true };
+export interface EditorProps {
+  ref: Ref<unknown>;
+  initialValue?: Descendant[];
+}
+
+export interface EditorRef {
+  getContent: Descendant[];
+  getContentString: string;
+}

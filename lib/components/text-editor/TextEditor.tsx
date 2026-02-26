@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useImperativeHandle, useState } from "react";
 import { createEditor } from "slate";
 import { Editable, Slate, withReact } from "slate-react";
 
@@ -7,18 +7,26 @@ import withLinks from "../../plugins/withLinks";
 import { useRenderBlocks } from "../../hooks";
 
 import styles from "./text-editor.module.css";
+import type { EditorProps } from "../../types";
 
-const initialValue = [
+const defaultInitialValue = [
   {
     type: "paragraph",
-    children: [{ text: "A line of text in a paragraph." }],
+    children: [{ text: "" }],
   },
 ];
 
-function TextEditor() {
+function TextEditor({ ref, initialValue = defaultInitialValue }: EditorProps) {
   const [editor] = useState(() => withReact(withLinks(createEditor())));
 
   const { renderBlocks, renderLeaf } = useRenderBlocks();
+
+  useImperativeHandle(ref, () => {
+    return {
+      getContent: () => editor.children,
+      getContentString: () => JSON.stringify(editor.children, null, 2),
+    };
+  });
 
   return (
     <div className={styles.textEditor}>

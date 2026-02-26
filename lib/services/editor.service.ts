@@ -5,6 +5,7 @@ import {
   Range,
   Transforms,
   type BaseEditor,
+  type BaseRange,
 } from "slate";
 import { ReactEditor } from "slate-react";
 
@@ -68,16 +69,23 @@ class editorService {
     return !!match;
   }
 
+  removeLink(editor: BaseEditor, selection: BaseRange) {
+    Transforms.unwrapNodes(editor, {
+      at: selection,
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        Element.isElement(n) &&
+        (n as any).type === "link",
+    });
+  }
+
   insertLink(editor: BaseEditor) {
-    const url = prompt("Enter a URL");
-
-    if (!url) return;
-
     const { selection } = editor;
 
     ReactEditor.focus(editor as any);
 
-    const link = {
+    let url: string | null = "";
+    let link = {
       type: "link",
       url,
       children: [{ text: "Ссылка" }],
@@ -90,16 +98,17 @@ class editorService {
       );
 
       if ((parentNode as any).type === "link") {
-        Transforms.unwrapNodes(editor, {
-          ...{},
-          match: (n) =>
-            !Editor.isEditor(n) &&
-            Element.isElement(n) &&
-            (n as any).type === "link",
-        });
-
+        this.removeLink(editor, selection);
         return;
       }
+
+      url = prompt("Enter a URL");
+      if (!url) return;
+
+      link = {
+        ...link,
+        url,
+      };
 
       if (editor.isVoid(parentNode)) {
         Transforms.insertNodes(
